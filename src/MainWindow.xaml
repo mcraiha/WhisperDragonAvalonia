@@ -1,0 +1,165 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="WhisperDragonAvalonia.MainWindow"
+		Title="WhisperDragonAvalonia" Height="450" Width="800">
+	<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+            <Menu Grid.Row="0">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_New..." Command="{Binding CreateNewCommonSecretsContainerViaMenu}" />
+                    <MenuItem Header="_Open..." Command="{Binding OpenCommonSecretsContainerViaMenu}" />
+                    <MenuItem Header="_Save" Command="{Binding SaveCommonSecretsContainerViaMenu}" IsEnabled="{Binding IsSaveEnabled, Mode=OneWay}" />
+                    <MenuItem Header="_Save As..." Command="{Binding SaveAsCommonSecretsContainerViaMenu}" IsEnabled="{Binding IsSaveEnabled, Mode=OneWay}" />
+                    <Separator />
+                    <MenuItem Header="_Exit" Command="{Binding TryToExitViaMenu}" />
+                </MenuItem>
+                <MenuItem Header="_Edit">
+                    <MenuItem  />
+                    <MenuItem  />
+                    <MenuItem  />
+                    <Separator />
+                    <MenuItem Header="Preferences..." Command="{Binding PreferencesViaMenu}" />
+                </MenuItem>
+                <MenuItem Header="_Tools">
+                    <MenuItem Header="Generate Password..." Command="{Binding GeneratePasswordViaMenu}" />
+                </MenuItem>
+                <MenuItem Header="Help">
+                    <MenuItem Header="View Help" />
+                    <Separator />
+                    <MenuItem Header="About" Command="{Binding ShowAboutViaMenu}" />
+                </MenuItem>
+            </Menu>
+
+            <Grid IsVisible="{Binding WizardVisibility}" Grid.Row="1">
+                <Grid.Background>
+                    <ImageBrush Source="/Assets/whisperdragon_1024x1024.png" Stretch="Uniform"/>
+                </Grid.Background>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" FontSize="20" Padding="3,3,3,3" Command="{Binding CreateNewCommonSecretsContainerViaMenu}" HorizontalAlignment="Center" VerticalAlignment="Center">New...</Button>
+                <Button Grid.Column="1" FontSize="20" Padding="3,3,3,3" Command="{Binding OpenCommonSecretsContainerViaMenu}" HorizontalAlignment="Center" VerticalAlignment="Center">Open...</Button>
+            </Grid>
+
+            <TabControl TabStripPlacement="Bottom" x:Name="tabSections" IsVisible="{Binding TabsVisibility}"  Grid.Row="1">
+
+                <TabItem Header="Logins (F2)">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <DataGrid Grid.Row="0" Grid.Column="0" 
+                                Name="LoginInformations" 
+                                SelectionMode="Single" AutoGenerateColumns="False" 
+                                IsReadOnly="True" >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Secure" Binding="{Binding IsSecure}"  />
+                                <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
+                                <DataGridTextColumn Header="Address / URL" Binding="{Binding URL}" />
+                                <DataGridTextColumn Header="Email" Binding="{Binding Email}" />
+                                <DataGridTextColumn Header="Username" Binding="{Binding Username}" />
+                                <DataGridTextColumn Header="Password" Binding="{Binding Password}" />
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" />
+                                <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" />
+                                <DataGridTextColumn Header="Creation time" Binding="{Binding CreationTime}" />
+                                <DataGridTextColumn Header="Modification time" Binding="{Binding ModificationTime}" />
+                            </DataGrid.Columns>
+                            <DataGrid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Open URL (F5)" Command="{Binding OpenURLViaMenu}" />
+                                    <MenuItem Header="Copy URL (F6)" Command="{Binding CopyURLViaMenu}" />
+                                    <MenuItem Header="Copy Username (F7)" Command="{Binding CopyUsernameViaMenu}" />
+                                    <MenuItem Header="Copy Password (F8)" Command="{Binding CopyPasswordViaMenu}" />
+                                    <Separator />
+                                    <MenuItem Header="Add Login..." Command="{Binding AddLoginViaMenu}" />
+                                    <MenuItem Header="Edit/View Login..." Command="{Binding EditViewLoginViaMenu}" />
+                                    <MenuItem Header="Duplicate Login" Command="{Binding DuplicateLoginViaMenu}" />
+                                    <MenuItem Header="Delete Login" Command="{Binding DeleteLoginViaMenu}" />
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
+                        </DataGrid>
+
+                        <Button Grid.Row="1" Grid.Column="0" Command="{Binding AddLoginViaButton}">+ Add</Button>
+
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Notes (F3)">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        
+                        <DataGrid Grid.Row="0" Grid.Column="0"
+                                Name="Notes" 
+                                SelectionMode="Single" AutoGenerateColumns="False"                
+                                IsReadOnly="True" >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Secure" Binding="{Binding IsSecure}" />
+                                <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
+                                <DataGridTextColumn Header="Text" Binding="{Binding Text}" />
+                                <DataGridTextColumn Header="Creation time" Binding="{Binding CreationTime}" />
+                                <DataGridTextColumn Header="Modification time" Binding="{Binding ModificationTime}" />
+                            </DataGrid.Columns>
+                            <DataGrid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add Note..." Command="{Binding AddNoteViaMenu}" />
+                                    <MenuItem Header="Edit/View Note..." Command="{Binding EditViewNoteViaMenu}" />
+                                    <MenuItem Header="Duplicate Note" Command="{Binding DuplicateNoteViaMenu}" />
+                                    <MenuItem Header="Delete Note" Command="{Binding DeleteNoteViaMenu}" />
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
+                        </DataGrid>
+
+                        <Button Grid.Row="1" Grid.Column="0" Command="{Binding AddNoteViaButton}">+ Note</Button>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Files (F4)">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <DataGrid Grid.Row="0" Grid.Column="0"
+                                Name="Files"
+                                SelectionMode="Single" AutoGenerateColumns="False" 
+                                IsReadOnly="True" >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Secure" Binding="{Binding IsSecure}" />
+                                <DataGridTextColumn Header="Filename" Binding="{Binding Filename}" />
+                                <DataGridTextColumn Header="File size" Binding="{Binding Filesize}" />
+                                <DataGridTextColumn Header="File type" Binding="{Binding Filetype}" />
+                                <DataGridTextColumn Header="Creation time" Binding="{Binding CreationTime}" />
+                                <DataGridTextColumn Header="Modification time" Binding="{Binding ModificationTime}" />
+                            </DataGrid.Columns>
+                            <DataGrid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Save File..." Command="{Binding SaveFileViaMenu}" />
+                                    <Separator />
+                                    <MenuItem Header="Add File..." Command="{Binding AddFileViaMenu}" />
+                                    <MenuItem Header="Edit/View File..." Command="{Binding EditViewFileViaMenu}" />
+                                    <MenuItem Header="Duplicate File" Command="{Binding DuplicateFileViaMenu}" />
+                                    <MenuItem Header="Delete File" Command="{Binding DeleteFileViaMenu}" />
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
+                        </DataGrid>
+
+                        <Button Grid.Row="1" Grid.Column="0" Command="{Binding AddFileViaButton}">+ File</Button>
+                    </Grid>
+                </TabItem>
+
+            </TabControl>
+    </Grid>
+</Window>
