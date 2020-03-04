@@ -1,4 +1,6 @@
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using System.Windows.Input;
 
 namespace WhisperDragonAvalonia
 {
@@ -33,5 +35,28 @@ namespace WhisperDragonAvalonia
 
 
 		#endregion // Visibility
+
+
+		#region Tools
+
+		private ICommand generatePasswordViaMenu;
+		public ICommand GeneratePasswordViaMenu
+		{
+			get
+			{
+				return generatePasswordViaMenu 
+					?? (generatePasswordViaMenu = new ActionCommand(() =>
+					{
+						CreatePasswordWindow passwordWindow = new CreatePasswordWindow();
+						if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+						{
+							passwordWindow.ShowDialog(desktopLifetime.MainWindow);
+						}
+					}));
+			}
+		}
+
+
+		#endregion // Tools
 	}
 }
