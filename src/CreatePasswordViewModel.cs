@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Input;
 using System.ComponentModel;
 using Avalonia;
-using Avalonia.Input.Platform;
 
 namespace WhisperDragonAvalonia
 {
