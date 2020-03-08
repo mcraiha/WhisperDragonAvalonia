@@ -12,12 +12,17 @@ namespace WhisperDragonAvalonia
 #if DEBUG
 			this.AttachDevTools();
 #endif
-			DataContext = new CreatePasswordViewModel(null, null);
+			DataContext = new CreatePasswordViewModel(this.OkClose, null);
 		}
 
 		private void InitializeComponent()
 		{
 			AvaloniaXamlLoader.Load(this);
+		}
+
+		private void OkClose()
+		{
+			this.Close();
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace WhisperDragonAvalonia
 {
 	public class CreatePasswordViewModel : INotifyPropertyChanged
 	{
-		public string PasswordLength { get; set; } = "16";
+		public int PasswordLength { get; set; } = 16;
 
 		public bool IncludeUpperCaseLatinLetters { get; set; } = true;
 
@@ -108,9 +108,7 @@ namespace WhisperDragonAvalonia
 				return generatePasswordCommand 
 					?? (generatePasswordCommand = new ActionCommand(() =>
 					{
-						int howManyChars = int.Parse(PasswordLength);
-
-						List<string> generated = new List<string>(howManyChars);
+						List<string> generated = new List<string>(this.PasswordLength);
 
 						List<string> possibleChars = new List<string>();
 
@@ -159,7 +157,7 @@ namespace WhisperDragonAvalonia
 							// Reorder all possible chars
 							possibleChars = possibleChars.OrderBy(x => GetPositiveRandomInt(generator)).ToList();
 
-							while (generated.Count < howManyChars)
+							while (generated.Count < this.PasswordLength)
 							{
 								int index = GetPositiveRandomInt(generator) % possibleChars.Count;
 								generated.Add(possibleChars[index]);
