@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using System.Windows.Input;
+using CSCommonSecrets;
 
 namespace WhisperDragonAvalonia
 {
@@ -39,6 +40,24 @@ namespace WhisperDragonAvalonia
 
 		#region Tools
 
+		private ICommand createNewCommonSecretsContainerViaMenu;
+
+		public ICommand CreateNewCommonSecretsContainerViaMenu
+		{
+			get
+			{
+				return createNewCommonSecretsContainerViaMenu 
+					?? (createNewCommonSecretsContainerViaMenu = new ActionCommand(() =>
+					{
+						CreateCommonSecretsWindow createCommonSecretsWindow = new CreateCommonSecretsWindow(this.CreateNewCommonSecrets);
+						if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+						{
+							createCommonSecretsWindow.ShowDialog(desktopLifetime.MainWindow);
+						}
+					}));
+			}
+		}
+
 		private ICommand generatePasswordViaMenu;
 		public ICommand GeneratePasswordViaMenu
 		{
@@ -58,5 +77,15 @@ namespace WhisperDragonAvalonia
 
 
 		#endregion // Tools
+
+
+		#region New, Open, Save, Close
+
+		private void CreateNewCommonSecrets(KeyDerivationFunctionEntry kdfe, string password)
+		{
+
+		}
+
+		#endregion // New, Open, Save, Close
 	}
 }
