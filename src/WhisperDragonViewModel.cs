@@ -1,14 +1,17 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using CSCommonSecrets;
 
 namespace WhisperDragonAvalonia
 {
-	public class WhisperDragonViewModel
+	public class WhisperDragonViewModel : INotifyPropertyChanged
 	{
-		public const string appName = "WhisperDragon WPF";
+		public const string appName = "WhisperDragon Avalonia";
 
 		public const string untitledTempName = "Untitled";
 
@@ -18,8 +21,6 @@ namespace WhisperDragonAvalonia
 		{ 
 			get { return csc != null; }
 		}
-
-		private string csc = null;
 
 		// Logins
 		private ObservableCollection<LoginSimplified> logins = new ObservableCollection<LoginSimplified>();
@@ -49,6 +50,35 @@ namespace WhisperDragonAvalonia
 		}
 
 		public FileSimplified SelectedFile { get; set; }
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Our current common secrets container reference
+		/// </summary>
+		private CommonSecretsContainer csc = null;
+
+		/// <summary>
+		/// What save format should be used
+		/// </summary>
+		private DeserializationFormat saveFormat = DeserializationFormat.None;
+
+		/// <summary>
+		/// Path to current file (might be null)
+		/// </summary>
+		private string filePath = null;
+
+		/// <summary>
+		/// Is CommonSecretsContainer modified
+		/// </summary>
+		private bool isModified = false;
+
+		/// <summary>
+		/// Because we do not want to store actual passwords in memory, keep collection of derived ones (TODO: encrypt at some point)
+		/// </summary>
+		/// <typeparam name="string">Key Identifier</typeparam>
+		/// <typeparam name="byte[]">Derived password as bytes</typeparam>
+		private readonly Dictionary<string, byte[]> derivedPasswords = new Dictionary<string, byte[]>();
 
 		#region Vibility
 
@@ -129,5 +159,20 @@ namespace WhisperDragonAvalonia
 		}
 
 		#endregion // New, Open, Save, Close
+
+
+		#region Property changed
+
+		// Create the OnPropertyChanged method to raise the event
+		protected void OnPropertyChanged(string name)
+		{
+			PropertyChangedEventHandler handler = PropertyChanged;
+			if (handler != null)
+			{
+				handler(this, new PropertyChangedEventArgs(name));
+			}
+		}
+
+		#endregion // Property changed
 	}
 }
