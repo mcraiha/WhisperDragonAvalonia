@@ -1,13 +1,55 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
 using CSCommonSecrets;
 
 namespace WhisperDragonAvalonia
 {
 	public class WhisperDragonViewModel
 	{
-		private string csc = null; 
+		public const string appName = "WhisperDragon WPF";
+
+		public const string untitledTempName = "Untitled";
+
+		public string MainTitle { get; set; } = appName;
+
+		public bool IsSaveEnabled 
+		{ 
+			get { return csc != null; }
+		}
+
+		private string csc = null;
+
+		// Logins
+		private ObservableCollection<LoginSimplified> logins = new ObservableCollection<LoginSimplified>();
+		public ObservableCollection<LoginSimplified> Logins
+		{
+			get { return this.logins; }
+		}
+
+		public LoginSimplified SelectedLogin { get; set; }
+
+
+		// Notes
+		private ObservableCollection<NoteSimplified> notes = new ObservableCollection<NoteSimplified>();
+		public ObservableCollection<NoteSimplified> Notes
+		{
+			get { return this.notes; }
+		}
+
+		public NoteSimplified SelectedNote { get; set; }
+
+
+		// Files
+		private ObservableCollection<FileSimplified> files = new ObservableCollection<FileSimplified>();
+		public ObservableCollection<FileSimplified> Files
+		{
+			get { return this.files; }
+		}
+
+		public FileSimplified SelectedFile { get; set; }
+
 		#region Vibility
 
 		public bool TabsVisibility
