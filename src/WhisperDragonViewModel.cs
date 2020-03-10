@@ -150,6 +150,29 @@ namespace WhisperDragonAvalonia
 
 		#endregion // Tools
 
+		#region Help
+
+		private ICommand showAboutViaMenu;
+
+		public ICommand ShowAboutViaMenu
+		{
+			get
+			{
+				return showAboutViaMenu
+					?? (showAboutViaMenu = new ActionCommand(() =>
+					{
+						AboutWindow aboutWindow = new AboutWindow();
+						if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+						{
+							aboutWindow.ShowDialog(desktopLifetime.MainWindow);
+						}
+					}));
+			}
+		}
+
+		#endregion // Help
+
+
 
 		#region New, Open, Save, Close
 
