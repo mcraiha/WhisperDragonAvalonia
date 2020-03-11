@@ -15,10 +15,10 @@ namespace WhisperDragonAvalonia
 		{
 			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 			{
-				desktop.MainWindow = new MainWindow
-				{
-					DataContext = new WhisperDragonViewModel()
-				};
+				desktop.MainWindow = new MainWindow();
+				/*{
+					DataContext = new WhisperDragonViewModel(tabSections)
+				};*/
 			}
 
 			base.OnFrameworkInitializationCompleted();

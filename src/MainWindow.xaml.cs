@@ -9,6 +9,8 @@ namespace WhisperDragonAvalonia
 		public MainWindow()
 		{
 			InitializeComponent();
+			
+			DataContext = new WhisperDragonViewModel(this.FindControl<TabControl>("tabSections"), this);
 #if DEBUG
 			this.AttachDevTools();
 #endif
