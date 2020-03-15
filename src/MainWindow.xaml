@@ -48,7 +48,7 @@
                 <Button Grid.Column="1" FontSize="20" Padding="3,3,3,3" Command="{Binding OpenCommonSecretsContainerViaMenu}" HorizontalAlignment="Center" VerticalAlignment="Center">Open...</Button>
             </Grid>
 
-            <TabControl TabStripPlacement="Bottom" x:Name="tabSections" IsVisible="{Binding TabsVisibility}"  Grid.Row="1">
+            <TabControl TabStripPlacement="Bottom" x:Name="tabSections" IsVisible="{Binding TabsVisibility}" Grid.Row="1">
 
                 <TabItem Header="Logins (F2)">
                     <Grid>
@@ -58,7 +58,7 @@
                         </Grid.RowDefinitions>
 
                         <DataGrid Grid.Row="0" Grid.Column="0" 
-                                Name="LoginInformations" 
+                                Name="LoginInformations" Items="{Binding Logins}" SelectedItem="{Binding SelectedLogin, Mode=TwoWay}"
                                 SelectionMode="Single" AutoGenerateColumns="False" 
                                 IsReadOnly="True" >
                             <DataGrid.Columns>
@@ -101,7 +101,7 @@
                         </Grid.RowDefinitions>
                         
                         <DataGrid Grid.Row="0" Grid.Column="0"
-                                Name="Notes" 
+                                Name="Notes" Items="{Binding Notes}" SelectedItem="{Binding SelectedNote, Mode=TwoWay}"
                                 SelectionMode="Single" AutoGenerateColumns="False"                
                                 IsReadOnly="True" >
                             <DataGrid.Columns>
@@ -133,7 +133,7 @@
                         </Grid.RowDefinitions>
 
                         <DataGrid Grid.Row="0" Grid.Column="0"
-                                Name="Files"
+                                Name="Files" Items="{Binding Files}" SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
                                 SelectionMode="Single" AutoGenerateColumns="False" 
                                 IsReadOnly="True" >
                             <DataGrid.Columns>
