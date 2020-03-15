@@ -4,7 +4,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="WhisperDragonAvalonia.MainWindow"
-		Title="WhisperDragonAvalonia" Height="450" Width="800">
+		Title="{Binding MainTitle}" Height="450" Width="800">
 	<Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
