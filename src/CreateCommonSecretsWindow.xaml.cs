@@ -10,13 +10,14 @@ namespace WhisperDragonAvalonia
 	{
 		private Action<KeyDerivationFunctionEntry, string> positive;
 
+		// TODO: Remove once Avalonia fixes XAML parsing
 		public CreateCommonSecretsWindow()
 		{
 			InitializeComponent();
 #if DEBUG
 			this.AttachDevTools();
 #endif
-			DataContext = new CreateCommonSecretsViewModel(this.OkClose, null);
+			DataContext = new CreateCommonSecretsViewModel(this.OkClose, this.CancelClose);
 		}
 
 		public CreateCommonSecretsWindow(Action<KeyDerivationFunctionEntry, string> onPositive)
@@ -26,7 +27,7 @@ namespace WhisperDragonAvalonia
 			this.AttachDevTools();
 #endif
 			this.positive = onPositive;
-			DataContext = new CreateCommonSecretsViewModel(this.OkClose, null);
+			DataContext = new CreateCommonSecretsViewModel(this.OkClose, this.CancelClose);
 		}
 
 		private void InitializeComponent()
