@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="WhisperDragonAvalonia.AddLoginWindow"
+		Title="Add login" MinWidth="350" SizeToContent="WidthAndHeight">
+		<StackPanel>
+			<TextBlock Text="Title:" Margin="2,5,2,2" />
+			<TextBox Name="title" Text="{Binding Title}" Margin="2,0,2,2" />
+
+			<TextBlock Text="URL:" Margin="2,5,2,2" />
+			<TextBox Name="url" Text="{Binding URL}" Margin="2,0,2,2" />
+
+			<TextBlock Text="Email:" Margin="2,5,2,2" />
+			<TextBox Name="email" Text="{Binding Email}" Margin="2,0,2,2" />
+
+			<TextBlock Text="Username:" Margin="2,5,2,2" />
+			<TextBox Name="username" Text="{Binding Username}" Margin="2,0,2,2" />
+
+			<TextBlock Text="Password:" Margin="2,5,2,2" />
+			<TextBox Name="password" Text="{Binding Password}" PasswordChar="{Binding CurrentPasswordChar}" Margin="2,0,2,2" />
+			<CheckBox IsChecked="{Binding VisiblePassword}" Margin="2,0,2,2">Visible</CheckBox>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+				<Button Margin="2" Command="{Binding CopyPasswordCommand}" IsEnabled="{Binding IsCopyButtonEnabled}" Padding="3,3,3,3">Copy</Button>
+				<Button Margin="2" Command="{Binding GeneratePasswordCommand}" Padding="3,3,3,3">Generate...</Button>
+			</StackPanel>
+
+			<TextBlock Text="Notes:" Margin="2,5,2,2" />
+			<!-- MinLines="3" MaxLines="5" -->
+			<TextBox Name="notes" Text="{Binding Notes}" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Visible"  Margin="2,0,2,2" />
+
+			<TextBlock Text="Category:" Margin="2,5,2,2" />
+			<TextBox Name="category" Text="{Binding Category}" Margin="2,0,2,2" />
+
+			<TextBlock Text="Tags:" Margin="2,5,2,2" />
+			<TextBox Name="tags" Text="{Binding Tags}" Margin="2,0,2,2" />
+
+			<CheckBox IsChecked="{Binding IsSecret}" Margin="2,15,2,2">Secret</CheckBox>
+
+			<TextBlock Text="Key identifier:" Margin="2,5,2,1" />
+			<ComboBox IsVisible="{Binding KeyIdentifierVisibility}" Items="{Binding KeyIdentifiers}" SelectedItem="{Binding SelectedKeyIdentifier, Mode=TwoWay}" Margin="2,0,2,2"></ComboBox>
+
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+				<Button Margin="10" Command="{Binding AddLoginCommand}" Padding="3,3,3,3">Add login</Button>
+				<Button Margin="10" Command="{Binding CancelCommand}" Padding="3,3,3,3">Cancel</Button>
+			</StackPanel>
+		</StackPanel>
+</Window>

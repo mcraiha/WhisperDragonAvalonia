@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -162,6 +163,14 @@ namespace WhisperDragonAvalonia
 
 		#endregion // Select tabs
 
+
+		#region Context menu items
+
+
+
+		#endregion // Context menu items
+
+
 		#region Title generation
 
 		private void UpdateMainTitle(string fileName)
@@ -303,7 +312,42 @@ namespace WhisperDragonAvalonia
 
 		#endregion // Help
 
+		private ICommand addLoginViaButton;
+		public ICommand AddLoginViaButton
+		{
+			get
+			{
+				return addLoginViaButton 
+					?? (addLoginViaButton = new ActionCommand(() =>
+					{
+						AddLoginWindow addLoginWindow = new AddLoginWindow(this.derivedPasswords.Keys.ToList(), this.AddLoginToCollection);
+						if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+						{
+							addLoginWindow.ShowDialog(desktopLifetime.MainWindow);
+						}
+					}));
+			}
+		}
 
+		private void AddLoginToCollection(LoginSimplified newLogin, string keyIdentifier)
+		{
+			LoginInformation loginToAdd = new LoginInformation(newLogin.Title, newLogin.URL, newLogin.Email, newLogin.Username, newLogin.Password, 
+																newLogin.Notes, newLogin.Icon, newLogin.Category, newLogin.Tags);
+			if (newLogin.IsSecure)
+			{
+				this.csc.AddLoginInformationSecret(this.derivedPasswords[keyIdentifier], loginToAdd, keyIdentifier);
+			}
+			else
+			{
+				this.csc.loginInformations.Add(loginToAdd);
+			}
+
+			// Adding a login information modifies the structure
+			this.isModified = true;
+			this.UpdateMainTitle(this.filePath != null ? this.filePath : untitledTempName);
+
+			this.GenerateLoginSimplifiedsFromCommonSecrets();
+		}
 
 		#region New, Open, Save, Close
 
