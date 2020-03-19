@@ -349,6 +349,42 @@ namespace WhisperDragonAvalonia
 			this.GenerateLoginSimplifiedsFromCommonSecrets();
 		}
 
+		private ICommand addNoteViaButton;
+		public ICommand AddNoteViaButton
+		{
+			get
+			{
+				return addNoteViaButton 
+					?? (addNoteViaButton = new ActionCommand(() =>
+					{
+						AddNoteWindow addNoteWindow = new AddNoteWindow(this.derivedPasswords.Keys.ToList(), this.AddNoteToCollection);
+						if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+						{
+							addNoteWindow.ShowDialog(desktopLifetime.MainWindow);
+						}
+					}));
+			}
+		}
+
+		private void AddNoteToCollection(NoteSimplified newNote, string keyIdentifier)
+		{
+			Note noteToAdd = new Note(newNote.Title, newNote.Text);
+			if (newNote.IsSecure)
+			{
+				this.csc.AddNoteSecret(this.derivedPasswords[keyIdentifier], noteToAdd, keyIdentifier);
+			}
+			else
+			{
+				this.csc.notes.Add(noteToAdd);
+			}
+
+			// Adding a note modifies the structure
+			this.isModified = true;
+			this.UpdateMainTitle(this.filePath != null ? this.filePath : untitledTempName);
+
+			this.GenerateNoteSimplifiedsFromCommonSecrets();
+		}
+
 		#region New, Open, Save, Close
 
 		private void CreateNewCommonSecrets(KeyDerivationFunctionEntry kdfe, string password)
