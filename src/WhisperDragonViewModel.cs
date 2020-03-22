@@ -166,7 +166,108 @@ namespace WhisperDragonAvalonia
 
 		#region Context menu items
 
+		private ICommand addLoginViaMenu;
+		public ICommand AddLoginViaMenu
+		{
+			get
+			{
+				return addLoginViaMenu
+					?? (addLoginViaMenu = new ActionCommand(() =>
+					{
+						AddLoginWindow addLoginWindow = new AddLoginWindow(this.derivedPasswords.Keys.ToList(), this.AddLoginToCollection);
+						if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+						{
+							addLoginWindow.ShowDialog(desktopLifetime.MainWindow);
+						}
+					}));
+			}
+		}
 
+		private ICommand editViewLoginViaMenu;
+		public ICommand EditViewLoginViaMenu
+		{
+			get
+			{
+				return editViewLoginViaMenu
+					?? (editViewLoginViaMenu = new ActionCommand(() =>
+					{
+						int index = this.SelectedLogin.zeroBasedIndexNumber;
+						LoginSimplified loginToEdit = null;
+						if (this.SelectedLogin.IsSecure) 
+						{
+							LoginInformationSecret lis = this.csc.loginInformationSecrets[index];
+							loginToEdit = LoginSimplified.TurnIntoEditable(lis, this.derivedPasswords[lis.GetKeyIdentifier()], index);
+						}
+						else
+						{
+							loginToEdit = LoginSimplified.TurnIntoEditable(this.csc.loginInformations[index], index);
+						}
+
+						//EditViewLoginWindow editViewLoginWindow = new EditViewLoginWindow(loginToEdit, this.derivedPasswords.Keys.ToList(), this.EditLoginInCollection);
+						//editViewLoginWindow.ShowDialog();
+					}));
+			}
+		}
+
+		private ICommand duplicateLoginViaMenu;
+		public ICommand DuplicateLoginViaMenu
+		{
+			get
+			{
+				return duplicateLoginViaMenu
+					?? (duplicateLoginViaMenu = new ActionCommand(() =>
+					{
+						if (this.SelectedLogin != null)
+						{
+							if (this.SelectedLogin.IsSecure)
+							{
+								LoginInformationSecret loginToAdd = new LoginInformationSecret(this.csc.loginInformationSecrets[this.SelectedLogin.zeroBasedIndexNumber]);
+								this.csc.loginInformationSecrets.Add(loginToAdd);
+							}
+							else
+							{
+								LoginInformation loginToAdd = new LoginInformation(this.csc.loginInformations[this.SelectedLogin.zeroBasedIndexNumber]);
+								this.csc.loginInformations.Add(loginToAdd);
+							}
+
+							// Duplicating a login information modifies the structure
+							this.isModified = true;
+							this.UpdateMainTitle(this.filePath != null ? this.filePath : untitledTempName);
+
+							this.GenerateLoginSimplifiedsFromCommonSecrets();
+						}
+					}));
+			}
+		}
+
+		private ICommand deleteLoginViaMenu;
+		public ICommand DeleteLoginViaMenu
+		{
+			get
+			{
+				return deleteLoginViaMenu
+					?? (deleteLoginViaMenu = new ActionCommand(() =>
+					{
+						if (this.SelectedLogin != null)
+						{
+							if (this.SelectedLogin.IsSecure)
+							{
+								this.csc.loginInformationSecrets.RemoveAt(this.SelectedLogin.zeroBasedIndexNumber);
+							}
+							else
+							{
+								this.csc.loginInformations.RemoveAt(this.SelectedLogin.zeroBasedIndexNumber);
+							}
+
+							// Deleting a login information modifies the structure
+							this.isModified = true;
+							this.UpdateMainTitle(this.filePath != null ? this.filePath : untitledTempName);
+
+							this.GenerateLoginSimplifiedsFromCommonSecrets();
+						}
+					}));
+			}
+		}
 
 		#endregion // Context menu items
 
