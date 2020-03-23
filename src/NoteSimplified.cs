@@ -64,5 +64,29 @@ namespace WhisperDragonAvalonia
 
 			return returnList;
 		}
+
+		public static NoteSimplified TurnIntoEditable(Note note, int zeroBasedIndexNumber)
+		{
+			return new NoteSimplified() {
+						zeroBasedIndexNumber = zeroBasedIndexNumber,
+						IsSecure = false,
+						Title = note.GetNoteTitle(),
+						Text = note.GetNoteText(),
+						CreationTime = note.GetCreationTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+						ModificationTime = note.GetModificationTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+					};
+		}
+
+		public static NoteSimplified TurnIntoEditable(NoteSecret noteSecret, byte[] derivedPassword, int zeroBasedIndexNumber)
+		{
+			return new NoteSimplified() {
+						zeroBasedIndexNumber = zeroBasedIndexNumber,
+						IsSecure = true,
+						Title = noteSecret.GetNoteTitle(derivedPassword),
+						Text = noteSecret.GetNoteText(derivedPassword),
+						CreationTime = noteSecret.GetCreationTime(derivedPassword).ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+						ModificationTime = noteSecret.GetModificationTime(derivedPassword).ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+					};
+		}
 	}
 }
