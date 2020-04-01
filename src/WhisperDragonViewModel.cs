@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Text.Json;
 using System.Linq;
 using System.Windows.Input;
@@ -479,6 +480,166 @@ namespace WhisperDragonAvalonia
 						}
 					}));
 			}
+		}
+
+		private ICommand openCommonSecretsContainerViaMenu;
+
+		public ICommand OpenCommonSecretsContainerViaMenu
+		{
+			get
+			{
+				return openCommonSecretsContainerViaMenu 
+					?? (openCommonSecretsContainerViaMenu = new ActionCommand(async () =>
+					{
+						string fileName = await GetOpenFilename();
+						if (fileName != null)
+						{
+							// First check what is the file format
+							byte[] allBytes = File.ReadAllBytes(fileName);
+							DeserializationFormat fileFormat = DeserializationFormat.None;
+							foreach (var kvp in DeserializationDefinitions.deserializers)
+							{
+								if (kvp.Value.isThisFormat(allBytes))
+								{
+									fileFormat = kvp.Key;
+									break;
+								}
+							}
+
+							if (fileFormat == DeserializationFormat.None || fileFormat == DeserializationFormat.Unknown)
+							{
+								//MessageBox.Show($"Cannot identify format of file: {openFileDialog.FileName}", "Error");
+								return;
+							}
+
+							// Try to deserialize
+							CommonSecretsContainer tempContainer = DeserializationDefinitions.deserializers[fileFormat].deserialize(allBytes);
+
+							// If contains secrets, then show secondary open step (which basically asks for passwords)
+							SecondaryOpenStepWindow secondaryOpenStepWindow = new SecondaryOpenStepWindow(tempContainer.keyDerivationFunctionEntries,
+																					(Dictionary<string,byte[]> derivedPasswords) => this.FinalOpenStepWithSecrets(fileName, fileFormat, tempContainer, derivedPasswords));
+
+							if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+							{
+								secondaryOpenStepWindow.ShowDialog(desktopLifetime.MainWindow);
+							}
+						}
+						
+					}));
+			}
+		}
+
+		/// <summary>
+		/// Final open step when file contains secrets
+		/// </summary>
+		/// <param name="filename">Filename</param>
+		/// <param name="fileFormat">File format</param>
+		/// <param name="tempContainer">Temp container</param>
+		/// <param name="newDerivedPasswords">New derived passwords</param>
+		private void FinalOpenStepWithSecrets(string filename, DeserializationFormat fileFormat, CommonSecretsContainer tempContainer, Dictionary<string, byte[]> newDerivedPasswords)
+		{
+			// Check that every entry can be decoded with given passwords
+			bool success = true;
+			foreach (LoginInformationSecret loginInformationSecret in tempContainer.loginInformationSecrets)
+			{
+				if (!loginInformationSecret.CanBeDecryptedWithDerivedPassword(newDerivedPasswords[loginInformationSecret.GetKeyIdentifier()]))
+				{
+					//MessageBox.Show($"Cannot decrypt login information secret which uses key identifier: {loginInformationSecret.GetKeyIdentifier()}", "Decryption error");
+					success = false;
+					break;
+				}
+			}
+
+			if (!success)
+			{
+				return;
+			}
+
+			foreach (NoteSecret noteSecret in tempContainer.noteSecrets)
+			{
+				if (!noteSecret.CanBeDecryptedWithDerivedPassword(newDerivedPasswords[noteSecret.GetKeyIdentifier()]))
+				{
+					//MessageBox.Show($"Cannot decrypt note secret which uses key identifier: {noteSecret.GetKeyIdentifier()}", "Decryption error");
+					success = false;
+					break;
+				}
+			}
+
+			if (!success)
+			{
+				return;
+			}
+
+			foreach (FileEntrySecret fileEntrySecret in tempContainer.fileSecrets)
+			{
+				if (!fileEntrySecret.CanBeDecryptedWithDerivedPassword(newDerivedPasswords[fileEntrySecret.GetKeyIdentifier()]))
+				{
+					//MessageBox.Show($"Cannot decrypt file secret which uses key identifier: {fileEntrySecret.GetKeyIdentifier()}", "Decryption error");
+					success = false;
+					break;
+				}
+			}
+
+			if (!success)
+			{
+				return;
+			}
+
+			// SUCCESS POINT
+			this.derivedPasswords.Clear();
+			foreach (var kvp in newDerivedPasswords)
+			{
+				this.derivedPasswords.Add(kvp.Key, kvp.Value);
+			}
+
+			this.csc = tempContainer;
+			this.isModified = false;
+			this.filePath = filename;
+
+			// Select the save format based on format of file opened (and assuming we know how to save it)
+			if (DeserializationDefinitions.deserializers[fileFormat].savingSupported)
+			{
+				this.saveFormat = fileFormat;
+			}
+			else
+			{
+				this.saveFormat = DeserializationFormat.None;
+			}
+			
+			this.UpdateMainTitle(filename);
+
+			// Enable save features
+			OnPropertyChanged(nameof(this.IsSaveEnabled));
+
+			// Change UI
+			OnPropertyChanged(nameof(this.TabsVisibility));
+			OnPropertyChanged(nameof(this.WizardVisibility));
+
+			this.GenerateLoginSimplifiedsFromCommonSecrets();
+			this.GenerateNoteSimplifiedsFromCommonSecrets();
+			this.GenerateFileSimplifiedsFromCommonSecrets();
+		}
+
+		private async Task<string> GetOpenFilename()
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filters = new List<FileDialogFilter>() 
+			{
+				new FileDialogFilter { Name = "CommonSecrets JSON (.commonsecrets.json)", Extensions = { ".commonsecrets.json" } },
+				new FileDialogFilter { Name = "CommonSecrets XML (.commonsecrets.xml)", Extensions = { ".commonsecrets.xml" } },
+				new FileDialogFilter { Name = "All files (*.*)", Extensions = { "*.*" } },
+			};
+			openFileDialog.AllowMultiple = false;
+
+			if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+			{
+				var outPathStrings = await openFileDialog.ShowAsync(desktopLifetime.MainWindow);
+				if (outPathStrings != null && outPathStrings.Length > 0)
+				{
+					return outPathStrings[0];
+				}
+			}
+			return null;
 		}
 
 		private ICommand generatePasswordViaMenu;
