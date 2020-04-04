@@ -659,6 +659,39 @@ namespace WhisperDragonAvalonia
 			}
 		}
 
+		private ICommand preferencesViaMenu;
+		public ICommand PreferencesViaMenu
+		{
+			get
+			{
+				return preferencesViaMenu 
+					?? (preferencesViaMenu = new ActionCommand(() =>
+					{
+						PreferencesWindow preferencesWindow = new PreferencesWindow(this.settingsData, this.currentSettingsPath, this.SaveSettingsData);
+						if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+						{
+							preferencesWindow.ShowDialog(desktopLifetime.MainWindow);
+						}
+					}));
+			}
+		}
+
+		private static readonly JsonSerializerOptions saveSettingsJSONoptions = new JsonSerializerOptions
+		{
+			WriteIndented = true
+		};
+
+		private void SaveSettingsData(SettingsData settings)
+		{
+			this.settingsData = settings;
+			string jsonString = JsonSerializer.Serialize(this.settingsData, saveSettingsJSONoptions);
+			File.WriteAllText(this.currentSettingsPath, jsonString);
+			
+			// Show changes immediately
+			this.GenerateLoginSimplifiedsFromCommonSecrets();
+			this.GenerateNoteSimplifiedsFromCommonSecrets();
+			this.GenerateFileSimplifiedsFromCommonSecrets();
+		}
 
 		#endregion // Tools
 
