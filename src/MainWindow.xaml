@@ -34,6 +34,7 @@
                 </MenuItem>
                 <MenuItem Header="_Tools">
                     <MenuItem Header="Generate Password..." Command="{Binding GeneratePasswordViaMenu}" />
+                    <MenuItem Header="Benchmark..." Command="{Binding BenchmarkViaMenu}" />
                 </MenuItem>
                 <MenuItem Header="Help">
                     <MenuItem Header="View Help" />

@@ -659,6 +659,23 @@ namespace WhisperDragonAvalonia
 			}
 		}
 
+		private ICommand benchmarkViaMenu;
+		public ICommand BenchmarkViaMenu
+		{
+			get
+			{
+				return benchmarkViaMenu 
+					?? (benchmarkViaMenu = new ActionCommand(() =>
+					{
+						BenchmarkWindow benchmarkWindow = new BenchmarkWindow();
+						if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+						{
+							benchmarkWindow.ShowDialog(desktopLifetime.MainWindow);
+						}
+					}));
+			}
+		}
+
 		private ICommand preferencesViaMenu;
 		public ICommand PreferencesViaMenu
 		{
